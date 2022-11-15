@@ -12,4 +12,5 @@ Python **3.11**
 
 ## Updates:
 - [x] Project created :tada:
-- [ ] Select and read the file.
+- [x] Select and read the file.
+- [ ] Select draw area and get coordinates.
