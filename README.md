@@ -14,4 +14,4 @@ Python **3.11**
 - [x] Project created :tada:
 - [x] Select and read the file.
 - [x] Select draw area and get coordinates.
-- [ ] Read the SVG file and calculate scale amount
+- [ ] Read the SVG file and calculate the amount of scale
