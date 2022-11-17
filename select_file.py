@@ -1,7 +1,7 @@
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 
-def get_lines():
+def get_file_path():
     #Create windowless Tk
     Tk().withdraw()
 
@@ -10,6 +10,4 @@ def get_lines():
 
     #if file selected
     if file:
-        with open(file,"r") as svg_file:
-            lines = svg_file.readlines()
-            return lines
+        return file
