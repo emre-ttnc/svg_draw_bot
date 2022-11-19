@@ -16,4 +16,5 @@ Python **3.11**
 - [x] Select and read the file.
 - [x] Select draw area and get coordinates.
 - [x] Read the SVG file and calculate the scale ratio (and align the drawing to the center of the area)
-- [ ] Get SVG Elements and parse them
+- [x] Get SVG Elements and parse them
+- [ ] Draw line, polyline, rectangle and polygon

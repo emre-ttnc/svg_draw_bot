@@ -19,8 +19,19 @@ def parse_svg(file_path):
             width = file.getAttribute("width")
             height = file.getAttribute("height")
             start_x, start_y, end_x, end_y = float(0), float(0), float(width), float(height)
+
+        ### ELEMENTS ###
+        elements = []
+
+        #get elements
+        def get_elements(node, elements = elements):
+            if node.nodeType is minidom.Node.ELEMENT_NODE:
+                for child in node.childNodes:
+                    get_elements(child)
+                if node.nodeName in ["rect", "circle", "ellipse", "line", "polygon", "polyline", "path"]:
+                    elements.append(node)
         
+        get_elements(file)
+
         doc.unlink()
-        return start_x, start_y, end_x, end_y
-
-
+        return start_x, start_y, end_x, end_y, elements

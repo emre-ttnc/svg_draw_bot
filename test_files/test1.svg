@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="512" height="512" viewBox="0 0 512 512" xml:space="preserve" style="stroke:black;fill:none;">
+    <line x1="0" y1="0" x2="512" y2="512" />
+    <polygon points="256,0 512,512 0,512" />
+    <polyline points="0,0 128,0 128,128 256,128 256,256 384,256 384,384 512,384 512,512" />
+    <path d="M256 256 L512 512 0 512" />
+    <circle cx="256" cy="256" r="128" />
+    <ellipse cx="256" cy="256" rx="256" ry="128" />
+</svg> 
