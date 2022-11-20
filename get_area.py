@@ -5,7 +5,7 @@ sx, sy, ex, ey = 0,0,0,0
 
 #create window and canvas
 window = tk.Tk()
-canvas = tk.Canvas(window)
+canvas = tk.Canvas(window, cursor="tcross")
 
 #pack the canvas and fill
 canvas.pack(fill=tk.BOTH, expand=True)

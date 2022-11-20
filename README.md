@@ -6,7 +6,7 @@ This program draws svg elements with the mouse
 ## Language:
 Python **3.11**
 
-### Libraries:
+### Libraries (modules):
 - tkinter
 - xml.dom
 - mouse [*PyPI Link*](https://pypi.org/project/mouse/)
@@ -17,4 +17,5 @@ Python **3.11**
 - [x] Select draw area and get coordinates.
 - [x] Read the SVG file and calculate the scale ratio (and align the drawing to the center of the area)
 - [x] Get SVG Elements and parse them
-- [ ] Draw line, polyline, rectangle and polygon
+- [x] Draw line, polyline, rectangle and polygon
+- [ ] Draw circle and ellipse

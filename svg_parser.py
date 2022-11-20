@@ -32,6 +32,5 @@ def parse_svg(file_path):
                     elements.append(node)
         
         get_elements(file)
-
-        doc.unlink()
+        
         return start_x, start_y, end_x, end_y, elements
