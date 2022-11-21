@@ -2,7 +2,7 @@ from sys import exit
 from select_file import get_file_path
 from get_area import get_positions
 from svg_parser import parse_svg
-from draw_shapes import draw_line, draw_rect, draw_polygon, draw_polyline
+from draw_shapes import draw_line, draw_rect, draw_polygon, draw_polyline, draw_circle, draw_ellipse
 from time import sleep
 from re import split
 
@@ -44,49 +44,79 @@ if scale_x > scale_y:
 elif scale_y > scale_x:
     start_y += int(((end_y - start_y) - drawing_height * scale_rate) / 2)
 
-#test
-sleep(3)
+
+### GET ATTRIBUTES AND CALL FUNCTIONS ###
+def _draw_line(element):
+    x1, y1, x2, y2 = element.getAttribute("x1"), element.getAttribute("y1"), element.getAttribute("x2"), element.getAttribute("y2")
+    draw_line(
+        x1 = start_x+float(x1)*scale_rate, 
+        y1 = start_y+float(y1)*scale_rate, 
+        x2 = start_x+float(x2)*scale_rate, 
+        y2 = start_y+float(y2)*scale_rate)
+
+def _draw_rect(element):
+    x, y, width, height = element.getAttribute("x"), element.getAttribute("y"), element.getAttribute("width"), element.getAttribute("height")
+    draw_rect(
+    x = start_x+float(x)*scale_rate, 
+    y = start_y+float(y)*scale_rate, 
+    width = float(width)*scale_rate, 
+    height = float(height)*scale_rate)
+
+def _draw_polyline(element):
+    points = element.getAttribute("points")
+    points = split(" |,", points) #seperate points (space and comma)
+    draw_polyline(
+        x = start_x, 
+        y = start_y, 
+        scale_rate = scale_rate, 
+        points = points)
+
+def _draw_polygon(element):
+    points = element.getAttribute("points")
+    points = split(" |,", points) #seperate points (space and comma)
+    draw_polygon(
+        x = start_x, 
+        y = start_y, 
+        scale_rate = scale_rate, 
+        points = points)
+
+def _draw_circle(element): ### cx, cy = center x, center y ### r = radius ###
+    cx, cy, r = element.getAttribute("cx"), element.getAttribute("cy"), element.getAttribute("r")
+    draw_circle(
+        cx = start_x + float(cx) * scale_rate,
+        cy = start_y + float(cy) * scale_rate,
+        r = float(r) * scale_rate)
+
+def _draw_ellipse(element): ### cx, cy = center x, center y ### rx, ry = radius x, radius y ###
+    cx, cy, rx, ry = element.getAttribute("cx"), element.getAttribute("cy"), element.getAttribute("rx"), element.getAttribute("ry")
+    draw_ellipse(
+        cx = start_x + float(cx) * scale_rate,
+        cy = start_y + float(cy) * scale_rate,
+        rx = float(rx) * scale_rate,
+        ry = float(ry) * scale_rate)
+
+sleep(3) #TEST
+
+### CALL FUNCTION FOR EACH ELEMENT ###
 for element in elements:
     match element.nodeName:
         case "rect":
-            x, y, width, height = element.getAttribute("x"), element.getAttribute("y"), element.getAttribute("width"), element.getAttribute("height")
-            draw_rect(
-                x = start_x+float(x)*scale_rate, 
-                y = start_y+float(y)*scale_rate, 
-                width = float(width)*scale_rate, 
-                height = float(height)*scale_rate)
+            _draw_rect(element)
             continue
         case "ellipse":
-            #TODO
+            _draw_ellipse(element)
             continue
         case "circle":
-            #TODO
+            _draw_circle(element)
             continue
         case "line":
-            x1, y1, x2, y2 = element.getAttribute("x1"), element.getAttribute("y1"), element.getAttribute("x2"), element.getAttribute("y2")
-            draw_line(
-                x1 = start_x+float(x1)*scale_rate, 
-                y1 = start_y+float(y1)*scale_rate, 
-                x2 = start_x+float(x2)*scale_rate, 
-                y2 = start_y+float(y2)*scale_rate)
+            _draw_line(element)
             continue
         case "polygon":
-            points = element.getAttribute("points")
-            points = split(" |,", points)
-            draw_polygon(
-                x = start_x, 
-                y = start_y, 
-                scale_rate = scale_rate, 
-                points = points)
+            _draw_polygon(element)
             continue
         case "polyline":
-            points = element.getAttribute("points")
-            points = split(" |,", points)
-            draw_polyline(
-                x = start_x, 
-                y = start_y, 
-                scale_rate = scale_rate, 
-                points = points)
+            _draw_polyline(element)
             continue
         case "path":
             #TODO

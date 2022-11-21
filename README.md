@@ -18,4 +18,5 @@ Python **3.11**
 - [x] Read the SVG file and calculate the scale ratio (and align the drawing to the center of the area)
 - [x] Get SVG Elements and parse them
 - [x] Draw line, polyline, rectangle and polygon
-- [ ] Draw circle and ellipse
+- [x] Draw circle and ellipse
+- [ ] Parse path
