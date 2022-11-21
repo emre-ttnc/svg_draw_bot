@@ -20,3 +20,10 @@ Python **3.11**
 - [x] Draw line, polyline, rectangle and polygon
 - [x] Draw circle and ellipse
 - [ ] Parse path
+
+
+## Test file
+<img src="https://raw.githubusercontent.com/emre-ttnc/svg_draw_bot/72480dfea564af636891fd47d4fab5c612e7d55b/test_files/test1.svg" width="auto">
+
+## Result
+<img src="https://github.com/emre-ttnc/svg_draw_bot/blob/main/test_files/result.gif?raw=true" width="auto">
