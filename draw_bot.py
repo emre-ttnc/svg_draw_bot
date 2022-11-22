@@ -1,6 +1,6 @@
 from sys import exit
 from select_file import get_file_path
-from get_area import get_positions
+from get_area import get_drawing_area_coordinates
 from svg_parser import parse_svg
 from draw_shapes import draw_line, draw_rect, draw_polygon, draw_polyline, draw_circle, draw_ellipse, draw_path
 from time import sleep
@@ -8,7 +8,7 @@ from re import split
 
 
 #Get selected area coordinates
-start_x, start_y, end_x, end_y = get_positions()
+start_x, start_y, end_x, end_y = get_drawing_area_coordinates()
 
 #if it is not an area then close the program
 if start_x == end_x or start_y == end_y:
@@ -71,7 +71,7 @@ def _draw_polyline(element):
         scale_rate = scale_rate, 
         points = points)
 
-def _draw_polygon(element): #TODO add Z/z !!
+def _draw_polygon(element):
     points = element.getAttribute("points")
     points = split(" |,", points) #seperate points (space and comma)
     draw_polygon(

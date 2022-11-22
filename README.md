@@ -7,8 +7,12 @@ This program draws svg elements with the mouse
 Python **3.11**
 
 ### Libraries (modules):
-- tkinter
-- xml.dom
+- tkinter (built-in)
+- xml.dom (built-in)
+- re (built-in)
+- math (built-in)
+- time (built-in)
+- sys (built-in)
 - mouse [*PyPI Link*](https://pypi.org/project/mouse/)
 
 ## Updates:
