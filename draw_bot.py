@@ -2,7 +2,7 @@ from sys import exit
 from select_file import get_file_path
 from get_area import get_positions
 from svg_parser import parse_svg
-from draw_shapes import draw_line, draw_rect, draw_polygon, draw_polyline, draw_circle, draw_ellipse
+from draw_shapes import draw_line, draw_rect, draw_polygon, draw_polyline, draw_circle, draw_ellipse, draw_path
 from time import sleep
 from re import split
 
@@ -71,7 +71,7 @@ def _draw_polyline(element):
         scale_rate = scale_rate, 
         points = points)
 
-def _draw_polygon(element):
+def _draw_polygon(element): #TODO add Z/z !!
     points = element.getAttribute("points")
     points = split(" |,", points) #seperate points (space and comma)
     draw_polygon(
@@ -95,7 +95,11 @@ def _draw_ellipse(element): ### cx, cy = center x, center y ### rx, ry = radius 
         rx = float(rx) * scale_rate,
         ry = float(ry) * scale_rate)
 
-sleep(3) #TEST
+def _draw_path(element):
+    d = element.getAttribute("d")
+    draw_path(d)
+
+sleep(1) #TEST
 
 ### CALL FUNCTION FOR EACH ELEMENT ###
 for element in elements:
@@ -119,5 +123,5 @@ for element in elements:
             _draw_polyline(element)
             continue
         case "path":
-            #TODO
+            _draw_path(element)
             continue

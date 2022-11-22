@@ -52,3 +52,26 @@ def draw_ellipse(cx, cy, rx, ry): #draw elliptical arc from 0 to 360
 
 def draw_circle(cx, cy, r):  #draw arc from 0 to 360
     draw_arc(x=cx, y=cy, start_angle=0, end_angle=360, r=r)
+
+# parse path's d  (!)private method
+def __parse_d(d: str):
+    start_point = 0 # to keep position
+    pieces = []
+    for i in range(1, len(d)): # skip first char bc it should be "M"
+        if d[i].upper() in ["M", "L", "H", "V", "C", "S", "Q", "T", "A"]:
+            pieces.append(d[start_point:i])
+            start_point = i
+    # add last piece
+    if d[-1].upper() == "Z":
+        pieces.append(d[start_point:-1]) # add last piece without Z/z 
+        pieces.append(d[-1]) # add z to pieces list
+    else:
+        pieces.append(d[start_point:]) # add last piece
+    return pieces
+
+def draw_path(d: str):
+    pieces = __parse_d(d.strip())
+    for piece in pieces:
+        #TODO create a control mechanism to see if the piece ends with Z/z
+        #TODO create a control mechanism to see that the piece has multiple points for one command (example: M 100,100 200,200, 150,150)
+        pass
