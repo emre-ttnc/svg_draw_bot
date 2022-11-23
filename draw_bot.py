@@ -65,6 +65,7 @@ def _draw_rect(element):
 def _draw_polyline(element):
     points = element.getAttribute("points")
     points = split(" |,", points) #seperate points (space and comma)
+    points = list(filter(None, points)) #remove empty parts from points_list
     draw_polyline(
         x = start_x, 
         y = start_y, 
@@ -74,6 +75,7 @@ def _draw_polyline(element):
 def _draw_polygon(element):
     points = element.getAttribute("points")
     points = split(" |,", points) #seperate points (space and comma)
+    points = list(filter(None, points)) #remove empty parts from points_list
     draw_polygon(
         x = start_x, 
         y = start_y, 
@@ -97,7 +99,7 @@ def _draw_ellipse(element): ### cx, cy = center x, center y ### rx, ry = radius 
 
 def _draw_path(element):
     d = element.getAttribute("d")
-    draw_path(d)
+    draw_path(d = d, x = start_x, y = start_y, scale_rate=scale_rate)
 
 sleep(1) #TEST
 

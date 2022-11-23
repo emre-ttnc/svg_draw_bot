@@ -24,7 +24,9 @@ Python **3.11**
 - [x] Draw line, polyline, rectangle and polygon
 - [x] Draw circle and ellipse
 - [x] Parse path
-- [ ] Parse each command and draw M, m, L, l, H, h, V, v and Z/z commands
+- [x] Parse each command and draw M, m, L, l, H, h, V, v and Z/z commands
+- [ ] Draw c (relative) and C(absolute) (cubic bézier) commands
+- [ ] Draw q (relative) and Q(absolute) (quadratic bézier) commands
 
 ## Test file
 <img src="https://raw.githubusercontent.com/emre-ttnc/svg_draw_bot/72480dfea564af636891fd47d4fab5c612e7d55b/test_files/test1.svg" width="auto">

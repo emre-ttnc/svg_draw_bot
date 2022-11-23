@@ -1,11 +1,9 @@
-from mouse import press, move, release
+from mouse import press, move, release, drag, get_position
 from math import sin, cos, pi
+from time import sleep
 
 def draw_line(x1:float, y1:float, x2:float, y2:float):
-    move(x1, y1, absolute=True, duration=0) #go to start point
-    press(button="left")
-    move(x2, y2, absolute=True, duration=0.2) #go to end point
-    release(button="left")
+    drag(x1, y1, x2, y2, absolute=True, duration=0.2)
 
 def draw_rect(x:float, y:float, width:float, height:float):
     move(x, y, absolute=True, duration=0) #go to start point
@@ -53,12 +51,14 @@ def draw_ellipse(cx, cy, rx, ry): #draw elliptical arc from 0 to 360
 def draw_circle(cx, cy, r):  #draw arc from 0 to 360
     draw_arc(x=cx, y=cy, start_angle=0, end_angle=360, r=r)
 
+#TODO create path methods in new file !!!
 # parse path's d  (!)private method
 def __parse_d(d: str):
     start_point = 0 # to keep position
+    d = d.strip() # trim white spaces
     pieces = []
     for i in range(1, len(d)): # skip first char bc it should be "M"
-        if d[i].upper() in ["M", "L", "H", "V", "C", "S", "Q", "T", "A"]:
+        if d[i].upper() in ["M", "L", "H", "V", "C", "S", "Q", "T", "A", "Z"]:
             pieces.append(d[start_point:i])
             start_point = i
     # add last piece
@@ -69,9 +69,85 @@ def __parse_d(d: str):
         pieces.append(d[start_point:]) # add last piece
     return pieces
 
-def draw_path(d: str):
+# parse command  (!)private method
+def __parse_command(main_piece: str):
+    start_point = 1 #skip first char (command char)
+    pieces = []
+    main_piece = main_piece.strip() #trim white spaces
+    if main_piece is None:
+        return
+    pieces.append(main_piece[0]) #add command char to list
+    for i in range(1, len(main_piece)): #skip first char (command char)
+        if main_piece[i] == "-":
+            pieces.append(main_piece[start_point:i])
+            start_point = i
+        elif main_piece[i] in [",", " "]:
+            pieces.append(main_piece[start_point:i])
+            start_point = i+1
+    # add last piece
+    if main_piece[-1].upper() == "Z":
+        pieces.append(main_piece[start_point:-1]) # add last piece without Z/z 
+        pieces.append(main_piece[-1]) # add z to pieces list
+    else:
+        pieces.append(main_piece[start_point:]) # add last piece
+    return list(filter(None, pieces))
+
+def draw_path(d: str, x, y, scale_rate):
     pieces = __parse_d(d.strip())
+    pieces = list(filter(None, pieces)) #remove empty pieces from pieces_list
+    current_x, current_y = 0, 0 #for H and V command
+    start_x, start_y = 0, 0 #for Z command
+    LINE_DURATION = 0.25 #for all line durations
     for piece in pieces:
-        #TODO create a control mechanism to see if the piece ends with Z/z
-        #TODO create a control mechanism to see that the piece has multiple points for one command (example: M 100,100 200,200, 150,150)
-        pass
+        piece = piece.strip()
+        if piece.strip().upper() != "Z": #if it is not "Z/z", parse command
+            piece = __parse_command(piece)
+        if piece is None:
+            continue
+        match piece[0]:
+            case "M": #Move to point (absolute)
+                move(x+float(piece[1])*scale_rate, y+float(piece[2])*scale_rate, absolute=True, duration=0) 
+                press(button="left")
+                start_x, start_y = get_position()
+                if len(piece) > 3:
+                    for i in range(3, len(piece)-1, 2):
+                        move(x+float(piece[i])*scale_rate, y+float(piece[i+1])*scale_rate, absolute=True, duration=LINE_DURATION)
+            
+            case "m": #Move to point (relative)
+                move(float(piece[-2])*scale_rate, float(piece[-1])*scale_rate, absolute=False, duration=0) 
+                press(button="left")
+                start_x, start_y = get_position()
+                if len(piece) > 3:
+                    for i in range(3, len(piece)-1, 2):
+                        move(float(piece[i])*scale_rate, float(piece[i+1])*scale_rate, absolute=False, duration=LINE_DURATION)
+            
+            case "L": #Line to point (absolute)
+                for i in range(1, len(piece)-1, 2): # -1 -> if there is an addinational number
+                    move(x+float(piece[i])*scale_rate, y+float(piece[i+1])*scale_rate, absolute=True, duration=LINE_DURATION)
+            
+            case "l": #Line to point (relative)
+                for i in range(1, len(piece)-1, 2): # -1 -> if there is an addinational number
+                    move(float(piece[i])*scale_rate, float(piece[i+1])*scale_rate, absolute=False, duration=LINE_DURATION)
+            
+            case "H": #Horizontal line to point (absolute)
+                for i in range(1, len(piece)):
+                    move(x+float(piece[i])*scale_rate, current_y, absolute=True, duration=LINE_DURATION)
+            
+            case "h": #Horizontal line to point (relative)
+                for i in range(1, len(piece)):
+                    move(float(piece[i])*scale_rate, 0, absolute=False, duration=LINE_DURATION)
+            
+            case "V": #Vertical line to point (absolute)
+                for i in range(1, len(piece)):
+                    move(current_x, y+float(piece[i])*scale_rate, absolute=True, duration=LINE_DURATION)
+            
+            case "v": #Vertical line to point (relative)
+                for i in range(1, len(piece)):
+                    move(0, float(piece[i])*scale_rate, absolute=False, duration=LINE_DURATION)
+            
+            case "Z" | "z": #Go to start point
+                move(start_x, start_y, absolute=True, duration=LINE_DURATION)
+                release(button="left")
+        sleep(0.1)
+        current_x, current_y = get_position()
+    release(button="left")
