@@ -51,13 +51,12 @@ def draw_ellipse(cx, cy, rx, ry): #draw elliptical arc from 0 to 360
 def draw_circle(cx, cy, r):  #draw arc from 0 to 360
     draw_arc(x=cx, y=cy, start_angle=0, end_angle=360, r=r)
 
-#TODO create path methods in new file !!!
 # parse path's d  (!)private method
 def __parse_d(d: str):
     start_point = 0 # to keep position
     d = d.strip() # trim white spaces
     pieces = []
-    for i in range(1, len(d)): # skip first char bc it should be "M"
+    for i in range(1, len(d)-1): # skip first char bc it should be "M" & skip last char bc it should be "Z" or number
         if d[i].upper() in ["M", "L", "H", "V", "C", "S", "Q", "T", "A", "Z"]:
             pieces.append(d[start_point:i])
             start_point = i
@@ -92,6 +91,13 @@ def __parse_command(main_piece: str):
         pieces.append(main_piece[start_point:]) # add last piece
     return list(filter(None, pieces))
 
+# calc and move (cubic bézier) (!)private method
+def __draw_cubic_bezier(sx, sy, dx1, dy1, dx2, dy2, dx, dy):
+    for t in range(1, 26): #Increase the range for smoother line
+        x = sx * (1-t/25)**3 + 3 * dx1 * t/25 * (1-t/25)**2 + 3 * dx2 * (t/25)**2 * (1 - t/25) + dx * (t/25)**3
+        y = sy * (1-t/25)**3 + 3 * dy1 * t/25 * (1-t/25)**2 + 3 * dy2 * (t/25)**2 * (1 - t/25) + dy * (t/25)**3
+        move(x, y, absolute=True, duration=0.01)
+
 def draw_path(d: str, x, y, scale_rate):
     pieces = __parse_d(d.strip())
     pieces = list(filter(None, pieces)) #remove empty pieces from pieces_list
@@ -106,6 +112,7 @@ def draw_path(d: str, x, y, scale_rate):
             continue
         match piece[0]:
             case "M": #Move to point (absolute)
+                release(button="left")
                 move(x+float(piece[1])*scale_rate, y+float(piece[2])*scale_rate, absolute=True, duration=0) 
                 press(button="left")
                 start_x, start_y = get_position()
@@ -114,6 +121,7 @@ def draw_path(d: str, x, y, scale_rate):
                         move(x+float(piece[i])*scale_rate, y+float(piece[i+1])*scale_rate, absolute=True, duration=LINE_DURATION)
             
             case "m": #Move to point (relative)
+                release(button="left")
                 move(float(piece[-2])*scale_rate, float(piece[-1])*scale_rate, absolute=False, duration=0) 
                 press(button="left")
                 start_x, start_y = get_position()
@@ -144,7 +152,22 @@ def draw_path(d: str, x, y, scale_rate):
             case "v": #Vertical line to point (relative)
                 for i in range(1, len(piece)):
                     move(0, float(piece[i])*scale_rate, absolute=False, duration=LINE_DURATION)
+
+            case "C": #Cubic bézier (absolute)
+                for i in range(1, len(piece)-5, 6): #step is 6 -> 6 coordinates
+                    dx1, dy1, dx2, dy2, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+6]]
+                    __draw_cubic_bezier(current_x, current_y, x+dx1, y+dy1, x+dx2, y+dy2, x+dx, y+dy)
+                    current_x, current_y = x+dx, y+dy #for multiple Cubic bézier
             
+            case "c": #Cubic bézier (relative)
+                for i in range(1, len(piece)-5, 6):  #step is 6 -> 6 coordinates
+                    c_x, c_y = get_position()
+                    c_x, c_y = (c_x - x)/scale_rate, (c_y - y)/scale_rate #get actual coordinates
+                    dx1, dy1 = (c_x + float(piece[i]))*scale_rate, (c_y + float(piece[i+1])) * scale_rate #first point (add current position)
+                    dx2, dy2 = (c_x + float(piece[i+2]))*scale_rate, (c_y + float(piece[i+3]))*scale_rate #second reference point (add current position)
+                    dx, dy = (c_x + float(piece[i+4]))*scale_rate, (c_y + float(piece[i+5]))*scale_rate #end point (add current position)
+                    __draw_cubic_bezier(x+c_x*scale_rate, y+c_y*scale_rate, x+dx1, y+dy1, x+dx2, y+dy2, x+dx, y+dy)
+
             case "Z" | "z": #Go to start point
                 move(start_x, start_y, absolute=True, duration=LINE_DURATION)
                 release(button="left")

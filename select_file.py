@@ -8,6 +8,8 @@ def get_file_path():
     #open file select dialog and assign to file
     file = askopenfilename(filetypes=[("SVG Files",["svg"])])
 
+    Tk().destroy()
+    
     #if file selected
     if file:
         return file

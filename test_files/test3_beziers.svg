@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="512" height="512" viewBox="0 0 512 512" xml:space="preserve" style="stroke:black;fill:none;">
+    <path d="
+    M512,0
+    C512 512 0 0 0 512 512,512 0,0 512,0
+    m-512,0
+    c512 0 0 512 512 512 0-512 -512 0 -512,-512
+    Q512 0 512 512 0,512 0,0
+    M512,0
+    q0,512 -512,512 0-512 512-512
+    " />
+</svg> 
