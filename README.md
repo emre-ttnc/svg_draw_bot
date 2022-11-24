@@ -25,8 +25,14 @@ Python **3.11**
 - [x] Draw circle and ellipse
 - [x] Parse path
 - [x] Parse each command and draw M, m, L, l, H, h, V, v and Z/z commands
-- [ ] Draw c (relative) and C(absolute) (cubic bézier) commands
-- [ ] Draw q (relative) and Q(absolute) (quadratic bézier) commands
+- [x] Draw c (relative) and C(absolute) (cubic bézier) commands
+- [x] Draw q (relative) and Q(absolute) (quadratic bézier) commands
+- [ ] Draw s (relative) and S(absolute) (smooth to) commands
+- [ ] Draw t (relative) and T(absolute) ()
+
+### Follow these links for additional information on Béziers and SVG path commands
+ - [*Bézier Curve*](https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
+ - [*SVG Paths*](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths)
 
 ## Test file
 <img src="https://raw.githubusercontent.com/emre-ttnc/svg_draw_bot/72480dfea564af636891fd47d4fab5c612e7d55b/test_files/test1.svg" width="auto">
