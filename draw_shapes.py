@@ -167,12 +167,16 @@ def draw_path(d: str, x, y, scale_rate):
                 for i in range(1, len(piece)-5, 6): #step is 6 -> 6 coordinates
                     dx1, dy1, dx2, dy2, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+6]] #absolute points
                     __draw_cubic_bezier(current_x, current_y, x+dx1, y+dy1, x+dx2, y+dy2, x+dx, y+dy)
+                    mirror_x = 2*dx - dx2 + x if dx != dx2 else dx+x #for Cubic bézier S-s command
+                    mirror_y = 2*dy - dy2 + y if dy != dy2 else dy+y #for Cubic bézier S-s command
                     current_x, current_y = x+dx, y+dy #for multiple Cubic bézier
             
             case "c": #Cubic bézier (relative)
                 for i in range(1, len(piece)-5, 6):  #step is 6 -> 6 coordinates
                     dx1, dy1, dx2, dy2, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+6]] #relative points
                     __draw_cubic_bezier(current_x, current_y, current_x+dx1, current_y+dy1, current_x+dx2, current_y+dy2, current_x+dx, current_y+dy)
+                    mirror_x = 2*dx - dx2 + current_x #for Cubic bézier S-s command
+                    mirror_y = 2*dy - dy2 + current_y #for Cubic bézier S-s command
                     current_x, current_y = current_x+dx, current_y+dy #for multiple Cubic bézier
             
             case "Q": #Quadratic bézier (absolute)
@@ -187,9 +191,31 @@ def draw_path(d: str, x, y, scale_rate):
                     __draw_quadratic_bezier(current_x, current_y, current_x+dx1, current_y+dy1, current_x+dx, current_y+dy)
                     current_x, current_y = current_x+dx, current_y+dy #for multiple Quadratic bézier
 
+            case "S": #Smooth to (absolute)
+                for i in range(1, len(piece)-3, 4):
+                    dx2, dy2, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+4]]
+                    __draw_cubic_bezier(current_x, current_y, mirror_x, mirror_y, x+dx2, y+dy2, x+dx, y+dy)
+                    mirror_x = 2*dx - dx2 + x if dx != dx2 else dx+x #for Cubic bézier S-s command
+                    mirror_y = 2*dy - dy2 + y if dy != dy2 else dy+y #for Cubic bézier S-s command
+                    current_x, current_y = x+dx, y+dy #for multiple Cubic bézier s commands
+
+            case "s":
+                for i in range(1, len(piece)-3, 4):
+                    dx2, dy2, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+4]]
+                    __draw_cubic_bezier(current_x, current_y, mirror_x, mirror_y, current_x+dx2, current_y+dy2, current_x+dx, current_y+dy)
+                    mirror_x = 2*dx - dx2 + current_x #for Cubic bézier S-s command
+                    mirror_y = 2*dy - dy2 + current_y #for Cubic bézier S-s command
+                    current_x, current_y = current_x+dx, current_y+dy #for multiple Cubic bézier s commands
+
+            case "T":
+                pass
+
+            case "t":
+                pass
+
             case "Z" | "z": #Go to start point
                 move(start_x, start_y, absolute=True, duration=LINE_DURATION)
                 release(button="left")
-        sleep(0.1)
+        sleep(0.01)
         current_x, current_y = get_position()
     release(button="left")
