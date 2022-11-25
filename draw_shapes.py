@@ -112,6 +112,7 @@ def draw_path(d: str, x, y, scale_rate):
     pieces = list(filter(None, pieces)) #remove empty pieces from pieces_list
     current_x, current_y = 0, 0 #for H and V command
     start_x, start_y = 0, 0 #for Z command
+    mirror_x, mirror_y = 0, 0 #for smooth to (S-s) and T-t commands
     LINE_DURATION = 0.25 #for all line durations
     for piece in pieces:
         piece = piece.strip()
@@ -164,32 +165,27 @@ def draw_path(d: str, x, y, scale_rate):
 
             case "C": #Cubic bézier (absolute)
                 for i in range(1, len(piece)-5, 6): #step is 6 -> 6 coordinates
-                    dx1, dy1, dx2, dy2, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+6]]
+                    dx1, dy1, dx2, dy2, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+6]] #absolute points
                     __draw_cubic_bezier(current_x, current_y, x+dx1, y+dy1, x+dx2, y+dy2, x+dx, y+dy)
                     current_x, current_y = x+dx, y+dy #for multiple Cubic bézier
             
             case "c": #Cubic bézier (relative)
                 for i in range(1, len(piece)-5, 6):  #step is 6 -> 6 coordinates
-                    c_x, c_y = get_position()
-                    c_x, c_y = (c_x - x)/scale_rate, (c_y - y)/scale_rate #get actual coordinates
-                    dx1, dy1 = (c_x + float(piece[i]))*scale_rate, (c_y + float(piece[i+1])) * scale_rate #first reference point (add current position)
-                    dx2, dy2 = (c_x + float(piece[i+2]))*scale_rate, (c_y + float(piece[i+3]))*scale_rate #second reference point (add current position)
-                    dx, dy = (c_x + float(piece[i+4]))*scale_rate, (c_y + float(piece[i+5]))*scale_rate #end point (add current position)
-                    __draw_cubic_bezier(x+c_x*scale_rate, y+c_y*scale_rate, x+dx1, y+dy1, x+dx2, y+dy2, x+dx, y+dy)
+                    dx1, dy1, dx2, dy2, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+6]] #relative points
+                    __draw_cubic_bezier(current_x, current_y, current_x+dx1, current_y+dy1, current_x+dx2, current_y+dy2, current_x+dx, current_y+dy)
+                    current_x, current_y = current_x+dx, current_y+dy #for multiple Cubic bézier
             
             case "Q": #Quadratic bézier (absolute)
                 for i in range(1, len(piece)-3, 4):
-                    dx1, dy1, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+4]]
+                    dx1, dy1, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+4]] #absolute points
                     __draw_quadratic_bezier(current_x, current_y, x+dx1, y+dy1, x+dx, y+dy)
                     current_x, current_y = x+dx, y+dy #for multiple Quadratic bézier
             
             case "q": #Quadratic bézier (relative)
                 for i in range(1, len(piece)-3, 4):
-                    c_x, c_y = get_position()
-                    c_x, c_y = (c_x - x)/scale_rate, (c_y - y)/scale_rate #get actual coordinates
-                    dx1, dy1 = (c_x + float(piece[i]))*scale_rate, (c_y + float(piece[i+1])) * scale_rate # reference point (add current position)
-                    dx, dy = (c_x + float(piece[i+2]))*scale_rate, (c_y + float(piece[i+3]))*scale_rate #end point (add current position)
-                    __draw_quadratic_bezier(x+c_x*scale_rate, y+c_y*scale_rate, x+dx1, y+dy1, x+dx, y+dy)
+                    dx1, dy1, dx, dy = [float(coord)*scale_rate for coord in piece[i:i+4]] #relative points
+                    __draw_quadratic_bezier(current_x, current_y, current_x+dx1, current_y+dy1, current_x+dx, current_y+dy)
+                    current_x, current_y = current_x+dx, current_y+dy #for multiple Quadratic bézier
 
             case "Z" | "z": #Go to start point
                 move(start_x, start_y, absolute=True, duration=LINE_DURATION)
