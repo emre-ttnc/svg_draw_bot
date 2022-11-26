@@ -27,8 +27,9 @@ Python **3.11**
 - [x] Parse each command and draw M, m, L, l, H, h, V, v and Z/z commands
 - [x] Draw c (relative) and C(absolute) (cubic bézier) commands
 - [x] Draw q (relative) and Q(absolute) (quadratic bézier) commands
-- [x] Draw s (relative) and S(absolute) (smooth to) commands
-- [ ] Draw t (relative) and T(absolute) ()
+- [x] Draw s (relative) and S(absolute) (cubic bézier smooth curve to) commands
+- [x] Draw t (relative) and T(absolute) (quadratic bézier smooth curve to) commands
+- [ ] Draw a (relative) and A(absolute) (arc) commands
 
 ### Follow these links for additional information on Béziers and SVG path commands
  - [*Bézier Curve*](https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
